@@ -9,7 +9,7 @@ from PIL import Image
 import tensorflow as tf
 import keras
 
-MODEL: keras.models.Sequential = keras.models.load_model('../model_potato_disease.h5')
+MODEL: keras.models.Sequential = keras.models.load_model('../Model/1')
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 
 app = FastAPI()
