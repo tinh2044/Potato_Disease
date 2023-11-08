@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import numpy as np
 
@@ -13,6 +14,20 @@ CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 
 app = FastAPI()
 
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://127.0.0.1:5500",
+    "http://127.0.0.1:5500/test.html",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/ping")
 async def ping():
@@ -20,7 +35,7 @@ async def ping():
 
 
 @app.post("/predict")
-async def predict(file: UploadFile):
+async def predict(file: UploadFile = File(...)):
     img_arr = read_file_as_image(await file.read())
 
     pred = MODEL.predict(tf.expand_dims(img_arr, 0))
@@ -45,4 +60,4 @@ def read_file_as_image(bytes) -> np.array:
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host='localhost', port=5000, reload=True)
+    uvicorn.run(app, host='localhost', port=5000, reload=False)
